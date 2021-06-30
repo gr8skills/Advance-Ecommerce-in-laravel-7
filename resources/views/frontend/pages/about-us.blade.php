@@ -20,7 +20,7 @@
 		</div>
 	</div>
 	<!-- End Breadcrumbs -->
-	
+
 	<!-- About Us -->
 	<section class="about-us section">
 			<div class="container">
@@ -30,7 +30,7 @@
 							@php
 								$settings=DB::table('settings')->get();
 							@endphp
-							<h3>Welcome To <span>Eshop</span></h3>
+							<h3>Welcome To <span>Owambe&Co</span></h3>
 							<p>@foreach($settings as $data) {{$data->description}} @endforeach</p>
 							<div class="button">
 								<a href="{{route('blog')}}" class="btn">Our Blog</a>
@@ -50,7 +50,7 @@
 			</div>
 	</section>
 	<!-- End About Us -->
-	
+
 	<!-- Start Team -->
 	{{-- <section id="team" class="team section">
 		<div class="container">
@@ -90,7 +90,7 @@
 							<!-- End Social -->
 						</div>
 					</div>
-				</div>	
+				</div>
 				<!-- End Single Team -->
 				<div class="col-lg-3 col-md-6 col-12">
 					<div class="single-team">
@@ -118,7 +118,7 @@
 							<!-- End Social -->
 						</div>
 					</div>
-				</div>	
+				</div>
 				<!-- End Single Team -->
 				<div class="col-lg-3 col-md-6 col-12">
 					<div class="single-team">
@@ -146,7 +146,7 @@
 							<!-- End Social -->
 						</div>
 					</div>
-				</div>	
+				</div>
 				<!-- End Single Team -->
 				<div class="col-lg-3 col-md-6 col-12">
 					<div class="single-team">
@@ -174,13 +174,13 @@
 							<!-- End Social -->
 						</div>
 					</div>
-				</div>	
+				</div>
 				<!-- End Single Team -->
-			</div>	
+			</div>
 		</div>
 	</section> --}}
 	<!--/ End Team Area -->
-	
+
 	<!-- Start Shop Services Area -->
 	<section class="shop-services section">
 		<div class="container">
@@ -225,6 +225,6 @@
 		</div>
 	</section>
 	<!-- End Shop Services Area -->
-	
+
 	@include('frontend.layouts.newsletter')
 @endsection
