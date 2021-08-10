@@ -87,8 +87,7 @@ class FlutterwaveController extends Controller
 //        $order = Order::all()->last();
 //        $order->update(['transaction_ref'=>$reference]);
 //        dd($order);
-        if($order)
-            // dd($order->id);
+        if($status)
             $users=User::where('role','admin')->first();
         $details=[
             'title'=>'New order created',
@@ -121,8 +120,8 @@ class FlutterwaveController extends Controller
             // return $cart;
             $data['items'] = array_map(function ($item) use($cart) {
                 $name=Product::where('id',$item['product_id'])->pluck('title');
-//            $nam = collect($na)->toArray();
-//            $name = $nam[0];
+                $nam = collect($name)->toArray();
+                $name = $nam[0];
                 return [
                     'name' =>$name ,
                     'price' => $item['price'],
@@ -130,6 +129,7 @@ class FlutterwaveController extends Controller
                     'qty' => $item['quantity']
                 ];
             }, $cart);
+            Order::where('transaction_ref',$reference)->update(['items_detail'=>$data['items']]);
             $data['invoice_id'] ='ORD-'.strtoupper(uniqid());
             $data['invoice_description'] = "Order #{$data['invoice_id']} Invoice";
             $data['return_url'] = route('callback');
@@ -166,7 +166,8 @@ class FlutterwaveController extends Controller
 
                 "customizations" => [
                     "title" => $data['invoice_id'] .' by ' .$email.' ('.$customer_name.')',
-                    "description" => $reference
+                    "description" => $reference,
+                    "items" => $data['items']
                 ]
             ];
 
@@ -184,9 +185,25 @@ class FlutterwaveController extends Controller
         }else{
             session()->forget('cart');
             session()->forget('coupon');
+
+            $cart = Cart::where('user_id',auth()->user()->id)->where('order_id',null)->get()->toArray();
+            $data = [];
+            $data['items'] = array_map(function ($item) use($cart) {
+                $name=Product::where('id',$item['product_id'])->pluck('title');
+                $nam = collect($name)->toArray();
+                $name = $nam[0];
+                return [
+                    'name' =>$name ,
+                    'price' => $item['price'],
+                    'desc'  => 'Thank you for using flutterwave',
+                    'qty' => $item['quantity']
+                ];
+            }, $cart);
+            Order::where('transaction_ref',$reference)->update(['items_detail'=>json_encode($data['items'])]);
+
+
             Cart::where('user_id', auth()->user()->id)->where('order_id', null)->update(['order_id' => $order->id]);
 
-            // dd($users);
             request()->session()->flash('success','Your order is placed successfully');
             return redirect()->route('home');
         }
