@@ -7,13 +7,14 @@
 				<div class="row">
 					<div class="col-lg-5 col-md-6 col-12">
 						<!-- Single Widget -->
+                        @php
+                            $settings=DB::table('settings')->get();
+                        @endphp
 						<div class="single-footer about">
 							<div class="logo">
-								<a href="index.html"><img src="{{asset('backend/img/log.png')}}" alt="#"></a>
+								<a href="{{route('home')}}"><img src="@foreach($settings as $data) {{$data->logo}} @endforeach" alt="#"></a>
 							</div>
-							@php
-								$settings=DB::table('settings')->get();
-							@endphp
+
 							<p class="text">@foreach($settings as $data) {{$data->short_des}} @endforeach</p>
 							<p class="call">Got Question? Call us 24/7<span><a href="tel:123456789">@foreach($settings as $data) {{$data->phone}} @endforeach</a></span></p>
 						</div>
@@ -50,7 +51,7 @@
 					<div class="col-lg-3 col-md-6 col-12">
 						<!-- Single Widget -->
 						<div class="single-footer social">
-							<h4>Get In Tuch</h4>
+							<h4>Get In Touch</h4>
 							<!-- Single Widget -->
 							<div class="contact">
 								<ul>
@@ -60,7 +61,7 @@
 								</ul>
 							</div>
 							<!-- End Single Widget -->
-							<div class="sharethis-inline-follow-buttons"></div>
+							<div class="sharethis-inline-share-buttons"></div>
 						</div>
 						<!-- End Single Widget -->
 					</div>

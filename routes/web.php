@@ -86,10 +86,14 @@ Route::resource('/comment','PostCommentController');
 // Coupon
 Route::post('/coupon-store','CouponController@couponStore')->name('coupon-store');
 // Payment
-Route::get('payment', 'PaypalController@payment')->name('payment');
+Route::post('payment', 'PaypalController@payment')->name('payment');
 Route::get('cancel', 'PayPalController@cancel')->name('payment.cancel');
 Route::get('payment/success', 'PayPalController@success')->name('payment.success');
 
+// The route that the button calls to initialize payment
+Route::post('/pay', 'FlutterwaveController@initialize')->name('pay');
+Route::get('/rave/callback', 'FlutterwaveController@callback')->name('callback');
+Route::get('/rave/cancel', 'FlutterwaveController@cancel')->name('flutter.cancel');
 
 
 // Backend section start

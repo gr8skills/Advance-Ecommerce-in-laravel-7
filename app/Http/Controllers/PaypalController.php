@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use Srmklive\PayPal\Facades\PayPal;
 use Srmklive\PayPal\Services\ExpressCheckout;
 use Illuminate\Http\Request;
 use NunoMaduro\Collision\Provider;
@@ -9,15 +10,18 @@ use App\Models\Product;
 use DB;
 class PaypalController extends Controller
 {
-    public function payment()
+    public function payment($params=null)
     {
-        $cart = Cart::where('user_id',auth()->user()->id)->where('order_id',null)->get()->toArray();
+        $order_id = $params['id'];
+        $cart = Cart::where('user_id',auth()->user()->id)->where('order_id',$order_id)->get()->toArray();
 
         $data = [];
 
         // return $cart;
         $data['items'] = array_map(function ($item) use($cart) {
             $name=Product::where('id',$item['product_id'])->pluck('title');
+//            $nam = collect($na)->toArray();
+//            $name = $nam[0];
             return [
                 'name' =>$name ,
                 'price' => $item['price'],
@@ -43,7 +47,7 @@ class PaypalController extends Controller
         Cart::where('user_id', auth()->user()->id)->where('order_id', null)->update(['order_id' => session()->get('id')]);
 
         // return session()->get('id');
-        $provider = new ExpressCheckout;
+        $provider = (new ExpressCheckout);
 
         $response = $provider->setExpressCheckout($data);
 

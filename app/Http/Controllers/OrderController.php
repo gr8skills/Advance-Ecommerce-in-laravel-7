@@ -12,6 +12,7 @@ use Notification;
 use Helper;
 use Illuminate\Support\Str;
 use App\Notifications\StatusNotification;
+use GuzzleHttp\Client;
 
 class OrderController extends Controller
 {
@@ -54,6 +55,7 @@ class OrderController extends Controller
             'post_code'=>'string|nullable',
             'email'=>'string|required'
         ]);
+        $full_name = $request['last_name'] . ' ' . $request['first_name'];
         // return $request->all();
 
         if(empty(Cart::where('user_id',auth()->user()->id)->where('order_id',null)->first())){
@@ -121,6 +123,9 @@ class OrderController extends Controller
         if(request('payment_method')=='paypal'){
             $order_data['payment_method']='paypal';
             $order_data['payment_status']='paid';
+        }elseif (request('payment_method')=='paystack'){
+            $order_data['payment_method']='paypal';
+            $order_data['payment_status']='paid';
         }
         else{
             $order_data['payment_method']='cod';
@@ -138,7 +143,18 @@ class OrderController extends Controller
         ];
         Notification::send($users, new StatusNotification($details));
         if(request('payment_method')=='paypal'){
-            return redirect()->route('payment')->with(['id'=>$order->id]);
+            $params = ['id'=>$order->id, 'email'=>$request['email'], 'phone'=>$request['phone'], 'address'=>$request['address1'], 'name'=>$full_name];
+            Cart::where('user_id', auth()->user()->id)->where('order_id', null)->update(['order_id' => $order->id]);
+            (new PaypalController)->payment($params);
+            exit;
+//            return redirect()->route('payment')->with(['id'=>$order->id, 'email'=>$request['email'], 'phone'=>$request['phone'], 'address'=>$request['address1'], 'name'=>$full_name]);
+        }elseif (request('payment_method')=='flutterwave'){
+            $params = ['id'=>$order->id, 'email'=>$request['email'], 'phone'=>$request['phone'], 'address'=>$request['address1'], 'name'=>$full_name];
+            Cart::where('user_id', auth()->user()->id)->where('order_id', null)->update(['order_id' => $order->id]);
+            $flutter = (new FlutterwaveController);
+            $flutter->initialize($params);
+            $flutter->callback();
+//            return redirect()->route('pay')->with(['id'=>$order->id, 'email'=>$request['email'], 'phone'=>$request['phone'], 'address'=>$request['address1'], 'name'=>$full_name]);
         }
         else{
             session()->forget('cart');
@@ -146,8 +162,8 @@ class OrderController extends Controller
         }
         Cart::where('user_id', auth()->user()->id)->where('order_id', null)->update(['order_id' => $order->id]);
 
-        // dd($users);        
-        request()->session()->flash('success','Your product successfully placed in order');
+        // dd($users);
+        request()->session()->flash('success','Your order is placed successfully');
         return redirect()->route('home');
     }
 
@@ -250,17 +266,17 @@ class OrderController extends Controller
             elseif($order->status=="process"){
                 request()->session()->flash('success','Your order is under processing please wait.');
                 return redirect()->route('home');
-    
+
             }
             elseif($order->status=="delivered"){
                 request()->session()->flash('success','Your order is successfully delivered.');
                 return redirect()->route('home');
-    
+
             }
             else{
                 request()->session()->flash('error','Your order canceled. please try again');
                 return redirect()->route('home');
-    
+
             }
         }
         else{

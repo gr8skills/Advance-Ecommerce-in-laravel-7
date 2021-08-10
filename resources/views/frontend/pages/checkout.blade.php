@@ -24,7 +24,7 @@
     <!-- Start Checkout -->
     <section class="shop checkout section">
         <div class="container">
-                <form class="form" method="POST" action="{{route('cart.order')}}">
+                <form class="form" method="POST" id="paymentForm" action="{{route('pay')}}">
                     @csrf
                     <div class="row">
 
@@ -64,7 +64,7 @@
                                     <div class="col-lg-6 col-md-6 col-12">
                                         <div class="form-group">
                                             <label>Phone Number <span>*</span></label>
-                                            <input type="number" name="phone" placeholder="" required value="{{old('phone')}}">
+                                            <input type="text" name="phone" placeholder="" required value="{{old('phone')}}">
                                             @error('phone')
                                                 <span class='text-danger'>{{$message}}</span>
                                             @enderror
@@ -368,7 +368,9 @@
                                                     <select name="shipping" class="nice-select">
                                                         <option value="">Select your address</option>
                                                         @foreach(Helper::shipping() as $shipping)
+                                                            {{$sp = $shipping->price}}
                                                         <option value="{{$shipping->id}}" class="shippingOption" data-price="{{$shipping->price}}">{{$shipping->type}}: ${{$shipping->price}}</option>
+
                                                         @endforeach
                                                     </select>
                                                 @else
@@ -402,7 +404,8 @@
                                             {{-- <label class="checkbox-inline" for="1"><input name="updates" id="1" type="checkbox"> Check Payments</label> --}}
                                             <form-group>
                                                 <input name="payment_method"  type="radio" value="cod"> <label> Cash On Delivery</label><br>
-                                                <input name="payment_method"  type="radio" value="paypal"> <label> PayPal</label>
+{{--                                                <input name="payment_method"  type="radio" value="paypal"> <label> PayPal</label><br>--}}
+                                                <input name="payment_method"  type="radio" value="flutterwave" checked> <label> Flutterwave</label>
                                             </form-group>
 
                                         </div>
@@ -420,7 +423,7 @@
                                 <div class="single-widget get-button">
                                     <div class="content">
                                         <div class="button">
-                                            <button type="submit" class="btn">proceed to checkout</button>
+                                            <button type="submit" class="btn" onclick="payWithPaystack()">proceed to checkout</button>
                                         </div>
                                     </div>
                                 </div>
@@ -578,5 +581,30 @@
 		});
 
 	</script>
+{{--    <script src="https://js.paystack.co/v1/inline.js"></script>--}}
+{{--    <script type="text/javascript">--}}
+{{--        let total_amount = '{{$total_amount}}';--}}
+{{--        let sp = '{{$sp}}';--}}
+{{--        const paymentForm = document.getElementById('paymentForm');--}}
+{{--        paymentForm.addEventListener("submit", payWithPaystack, false);--}}
+{{--        function payWithPaystack(e) {--}}
+{{--            e.preventDefault();--}}
+{{--            let handler = PaystackPop.setup({--}}
+{{--                key: 'pk_test_6d6c5c41906108027355e0570a519d3201772851', // Replace with your public key--}}
+{{--                email: 'gr8skills@engineer.com',--}}
+{{--                amount: (parseInt(total_amount) * 100) + (parseInt(sp) * 100),--}}
+{{--                ref: ''+Math.floor((Math.random() * 1000000000) + 1), // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you--}}
+{{--                // label: "Optional string that replaces customer email"--}}
+{{--                onClose: function(){--}}
+{{--                    alert('Window closed. '+number_format(total_amount, 2)+' not payed');--}}
+{{--                },--}}
+{{--                callback: function(response){--}}
+{{--                    let message = 'Payment complete! Reference: ' + response.reference;--}}
+{{--                    alert(message);--}}
+{{--                }--}}
+{{--            });--}}
+{{--            handler.openIframe();--}}
+{{--        }--}}
+{{--    </script>--}}
 
 @endpush
