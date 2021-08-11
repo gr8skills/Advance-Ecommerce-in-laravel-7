@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Customer;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\PayBeforeDelivery;
@@ -34,7 +35,7 @@ class FlutterwaveController extends Controller
 
         $signed_in_user = auth()->user();
         $customer = [];
-        $customer['user_id'] = $signed_in_user->id;
+        $customer['user_id'] = $request->user()->id;
         $customer['first_name'] = $request['first_name'];
         $customer['last_name'] = $request['last_name'];
         $customer['email'] = $signed_in_user->email;
@@ -44,6 +45,15 @@ class FlutterwaveController extends Controller
         $customer['address2'] = $request['address2'];
         $customer['postal_code'] = $request['post_code'];
         $customer['postal_code'] = $request['post_code'];
+        $check = Customer::find($customer['user_id']);
+        if (is_null($check) || !isset($check))
+        {
+            $custo = new Customer();
+            $custo->fill($customer);
+            $custo->save();
+        }
+
+
         if(empty(Cart::where('user_id',auth()->user()->id)->where('order_id',null)->first())){
             request()->session()->flash('error','Cart is Empty !');
             return back();
