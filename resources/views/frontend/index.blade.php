@@ -205,7 +205,7 @@
                             @php
                                 $photo=explode(',',$data->photo);
                             @endphp
-                            <img src="{{$photo[0]}}" alt="{{$photo[0]}}">
+                            <img src="{{$photo[0]}}" alt="{{$photo[0]}}" style="height: 350px; max-height: 400px">
                             <div class="content">
                                 <p>{{$data->cat_info['title']}}</p>
                                 <h3>{{$data->title}} <br>Up to<span> {{$data->discount}}%</span></h3>
@@ -313,7 +313,7 @@
                                 <div class="col-lg-6 col-md-6 col-12 no-padding">
                                     <div class="content">
                                         <h4 class="title"><a href="#">{{$product->title}}</a></h4>
-                                        <p class="price with-discount">${{number_format($product->discount,2)}}</p>
+                                        <a href="{{route('add-to-cart',$product->slug)}}" class="buy"><p class="price with-discount">${{number_format($product->discount,2)}}</p></a>
                                     </div>
                                 </div>
                                 </div>
