@@ -31,6 +31,19 @@ class FlutterwaveController extends Controller
             'post_code'=>'string|nullable',
             'email'=>'string|required'
         ]);
+
+        $signed_in_user = auth()->user();
+        $customer = [];
+        $customer['user_id'] = $signed_in_user->id;
+        $customer['first_name'] = $request['first_name'];
+        $customer['last_name'] = $request['last_name'];
+        $customer['email'] = $signed_in_user->email;
+        $customer['phone'] = $request['phone'];
+        $customer['country'] = $request['country'];
+        $customer['address1'] = $request['address1'];
+        $customer['address2'] = $request['address2'];
+        $customer['postal_code'] = $request['post_code'];
+        $customer['postal_code'] = $request['post_code'];
         if(empty(Cart::where('user_id',auth()->user()->id)->where('order_id',null)->first())){
             request()->session()->flash('error','Cart is Empty !');
             return back();
@@ -179,12 +192,9 @@ class FlutterwaveController extends Controller
                 request()->session()->flash('error','Error occurred');
                 return;
             }
-            session()->forget('cart');
-            session()->forget('coupon');
+
             return redirect($payment['data']['link']);
         }else{
-            session()->forget('cart');
-            session()->forget('coupon');
 
             $cart = Cart::where('user_id',auth()->user()->id)->where('order_id',null)->get()->toArray();
             $data = [];
@@ -203,7 +213,9 @@ class FlutterwaveController extends Controller
 
 
             Cart::where('user_id', auth()->user()->id)->where('order_id', null)->update(['order_id' => $order->id]);
-
+            session()->forget('cart');
+            session()->forget('coupon');
+            session()->save();
             request()->session()->flash('success','Your order is placed successfully');
             return redirect()->route('home');
         }
@@ -243,6 +255,7 @@ class FlutterwaveController extends Controller
 //            request()->session()->flush();
             session()->forget('cart');
             session()->forget('coupon');
+            session()->save();
             request()->session()->flash('success','Your order is placed successfully');
             return redirect()->route('home');
         }

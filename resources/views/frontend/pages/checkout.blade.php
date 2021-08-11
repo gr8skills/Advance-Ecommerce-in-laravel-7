@@ -33,11 +33,14 @@
                                 <h2>Make Your Checkout Here</h2>
                                 <p>Please register in order to checkout more quickly</p>
                                 <!-- Form -->
+                                @php
+                                    $user = auth()->user();
+                                @endphp
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6 col-12">
                                         <div class="form-group">
                                             <label>First Name<span>*</span></label>
-                                            <input type="text" name="first_name" placeholder="" value="{{old('first_name')}}" value="{{old('first_name')}}">
+                                            <input type="text" name="first_name" placeholder="{{$user->name}}" value="{{old('first_name') ? old('first_name'):$user->name}}" >
                                             @error('first_name')
                                                 <span class='text-danger'>{{$message}}</span>
                                             @enderror
@@ -46,7 +49,7 @@
                                     <div class="col-lg-6 col-md-6 col-12">
                                         <div class="form-group">
                                             <label>Last Name<span>*</span></label>
-                                            <input type="text" name="last_name" placeholder="" value="{{old('lat_name')}}">
+                                            <input type="text" name="last_name" placeholder="" value="{{old('last_name')}}">
                                             @error('last_name')
                                                 <span class='text-danger'>{{$message}}</span>
                                             @enderror
@@ -55,7 +58,7 @@
                                     <div class="col-lg-6 col-md-6 col-12">
                                         <div class="form-group">
                                             <label>Email Address<span>*</span></label>
-                                            <input type="email" name="email" placeholder="" value="{{old('email')}}">
+                                            <input type="email" name="email" placeholder="{{$user->email}}" value="{{old('email')?old('email'):$user->email}}">
                                             @error('email')
                                                 <span class='text-danger'>{{$message}}</span>
                                             @enderror
@@ -423,7 +426,7 @@
                                 <div class="single-widget get-button">
                                     <div class="content">
                                         <div class="button">
-                                            <button type="submit" class="btn" onclick="payWithPaystack()">proceed to checkout</button>
+                                            <button type="submit" class="btn">proceed to checkout</button>
                                         </div>
                                     </div>
                                 </div>
@@ -444,7 +447,7 @@
                     <!-- Start Single Service -->
                     <div class="single-service">
                         <i class="ti-rocket"></i>
-                        <h4>Free shiping</h4>
+                        <h4>Free shipping</h4>
                         <p>Orders over $100</p>
                     </div>
                     <!-- End Single Service -->
@@ -471,7 +474,7 @@
                     <!-- Start Single Service -->
                     <div class="single-service">
                         <i class="ti-tag"></i>
-                        <h4>Best Peice</h4>
+                        <h4>Best Piece</h4>
                         <p>Guaranteed price</p>
                     </div>
                     <!-- End Single Service -->
